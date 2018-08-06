@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<root>
+	<q value2="10">q</q>
+	<w>w
+		<e value2="2">e
+			<r>r</r>
+			<t>t
+				<y value2="4">y</y>
+			</t>
+		</e>
+	</w>
+	<u>u</u>
+	<i>i
+		<a>a</a>
+		<s>s</s>
+		<d value2="8">d</d>
+	</i>
+	<o value2="1">оп</o>
+</root>
