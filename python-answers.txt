@@ -1,0 +1,131 @@
+Вопросы по Python
+
+Вопрос 1.
+
+Как  бы  Вы  реализовали  программу,  которая  загружает  текстовый  файл  и  записывает  его  строки  в  обратном
+порядке в другой файл?
+
+try:
+    readHandler = open("test.txt", "r")
+    writeHandler = open("test-rev.txt", "w")
+    for line in reversed(readHandler.readlines()):
+        writeHandler.write(line)
+except IOError:
+    print("An IOError has occurred!")
+finally:
+    writeHandler.close()
+    readHandler.close()
+
+
+
+Вопрос 2.
+Что будет напечатано в результате выполнения каждого из представленных ниже фрагментов кода?
+---
+a = 2
+b = a
+b = 3
+print a
+---
+a = [2]
+b = a
+b[0] = 3
+print a
+
+
+В первом случае 2, во втором [3]
+
+
+
+Вопрос 3.
+Что напечатает данная программка? Почему?
+---
+x = [[]]*3 <-- инициализируются 3 списка в списке
+x[0].append('a') <-- в конец каждого добавится элемент 'a'
+x[1].append('b') <-- в конец каждого добавится элемент 'b'
+x[2].append('c') <-- в конец каждого добавится элемент 'c'
+x[0]=['d'] <-- нулевому элементу будет присвоен список ['d']
+print x
+---
+
+В результате будет [['d'], ['a', 'b', 'c'], ['a', 'b', 'c']] 
+
+
+
+Вопрос 4.
+Что будет выведено в результате исполнения программы, почему?
+---
+# объявление класса
+class A:
+	def __init__(self, name):
+		self.name = name
+	def __del__(self):
+		print (self.name),
+
+# список из 3х экземпляров класса
+aa = [A(str(i)) for i in range(3)]
+
+for a in aa:
+	del a
+
+print ('done')
+---
+
+В результате будет:
+done
+2
+1
+0
+
+Сначала выполнение print(), а далее скорее всего сработает сборщик мусора, скорее всего из-за того, что for может как-то оптимизироваться в процессе работы скрипта или из-за особенностей работы с памятью выделенной под объекты.
+
+
+Вопрос 5.
+Что будет выведено в результате исполнения программы, почему?
+---
+class A:
+	def __init__(self):
+		self.__value = 1
+	def getvalue(self):
+		return self.__value
+
+class B (A):
+	def __init__(self):
+		A.__init__(self)
+		self.__value = 2
+
+b = B()
+print (b.getvalue() == b.__value)
+---
+
+По соглашению языка, __value является защищённой переменной, поэтому будет:
+Traceback (most recent call last):
+  File "example.py", line 13, in <module>
+    print (b.getvalue() == b.__value)
+AttributeError: 'B' object has no attribute '__value'
+
+а если __value заменить, например, на data_value, то будет:
+True
+
+
+
+Вопрос 6.
+Что неправильно в этом коде?
+---
+class A:
+	def __init__(self):
+		self._greeting = 'hello'
+
+	def greet(self):
+		print self._greeting
+
+class B(A):
+	def __init__(self):
+		self._greeting_add = ', world'
+	def greet(self):
+		print(self._greeting + self._greeting_add)
+
+b = B()
+b.greet()
+---
+
+В __init__ класса A не передано _greeting, поэтому _greeting не видно в классе B
