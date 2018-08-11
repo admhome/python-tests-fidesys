@@ -17,29 +17,6 @@ def createParser():
     return parser
 
 
-# def parseXML(data):
-#     summ = 0
-#     count = 0
-
-#     for dataItem in xmlRoot:
-#         if dataItem.attrib:
-#             if dataItem.attrib['value2']:
-#                 summ += int(dataItem.attrib['value2'])
-#                 count += 1
-
-#         if dataItem.childNodes:
-#             for child in dataItem.childNodes:
-#                 avgRes = parseXML(child)
-
-#                 summ += avgRes["summ"]
-#                 count += avgRes["count"]
-
-#     return {
-#         "summ": summ,
-#         "count": count
-#     }
-
-
 def findInXML(data):
     summ = 0
     count = 0
