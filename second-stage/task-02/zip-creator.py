@@ -26,13 +26,13 @@ if __name__ == '__main__':
 
     # формирование имени входного каталога
     if scriptParams.input:
-        inputFilename = scriptParams.input
+        inputDirName = scriptParams.input
 
-        if inputFilename[-1] != os.sep:
-            inputFilename += os.sep
+        if inputDirName[-1] != os.sep:
+            inputDirName += os.sep
 
     else:
-        inputFilename = ""
+        inputDirName = ""
 
     # формирование имени выходного файла
     if scriptParams.output:
@@ -45,9 +45,10 @@ if __name__ == '__main__':
     else:
         outputFilename = ZIP_OTPUT_FILE_NAME
 
-    print("Input file: " + inputFilename)
+    print("Input dir: " + inputDirName)
     print("Output file: " + outputFilename)
 
+    # create folders and files
     for iter in range(15):
         if (iter < 10):
             # with GUID
@@ -56,13 +57,13 @@ if __name__ == '__main__':
             # without GUID
             dirSuffix = 'dir-name-' + ('%03d' % iter)
 
-        iterDir = inputFilename + dirSuffix
+        iterDir = inputDirName + dirSuffix
 
         # safely create dir
         if not os.path.exists(iterDir):
             os.makedirs(iterDir)
 
-            print('Folder created')
+            print('Folder "' + str(dirSuffix) + '" created')
 
             JSONdata = {
                 'value': iter,
@@ -72,13 +73,12 @@ if __name__ == '__main__':
             # write json-files
             with open(iterDir + os.sep + JSON_FILE_NAME, 'w') as JSONfile:
                 json.dump(JSONdata, JSONfile)
-
-        print('iter: ' + str(iter) + ', iterDir: ' + iterDir)
+                print('json file must be write in "' + dirSuffix + os.sep + JSON_FILE_NAME + '"')
 
     # zip it
     ZIPfile = zipfile.ZipFile(outputFilename, 'w')
 
-    for root, dirs, files in os.walk(inputFilename):
+    for root, dirs, files in os.walk(inputDirName):
         for file in files:
             realPath = os.path.join(root, file)
             fakePath = (os.sep).join(realPath.split(os.sep)[-2:])
