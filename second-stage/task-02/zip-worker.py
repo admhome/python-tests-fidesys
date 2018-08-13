@@ -117,7 +117,7 @@ if __name__ == '__main__':
             # print('key: ' + str(key))
             # print('value: ' + str(value))
             for sortedDataItem in value['sorted']:
-                csvWriter.writerow(sortedDataItem.values())
+                csvWriter.writerow(list(sortedDataItem.values()))
 
             zip.writestr(value['name'], csvData.getvalue())
 
