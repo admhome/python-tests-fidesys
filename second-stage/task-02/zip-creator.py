@@ -7,6 +7,7 @@ import zipfile
 import uuid
 import json
 import random
+import codecs
 
 
 ZIP_OTPUT_FILE_NAME = "task2.zip"
@@ -74,7 +75,7 @@ if __name__ == '__main__':
             }
 
             # write json-files
-            with open(iterDir + os.sep + JSON_FILE_NAME, 'w') as JSONfile:
+            with codecs.open(iterDir + os.sep + JSON_FILE_NAME, 'w', 'utf-8-sig') as JSONfile:
                 json.dump(JSONdata, JSONfile)
                 print('json file must be write in "' + dirSuffix + os.sep + JSON_FILE_NAME + '"')
 

@@ -58,18 +58,19 @@ if __name__ == '__main__':
         for file in zip.namelist():
             zipFile = zip.getinfo(file).filename
             zipDir = os.path.dirname(zipFile)
-            print('File: ' + str(zipFile))
-            print('Dir: ' + str(zipDir))
+            # print('File: ' + str(zipFile))
+            # print('Dir: ' + str(zipDir))
 
             with zip.open(zipFile) as f:
                 data = f.read()
 
-            encodedData = json.loads(data.decode("utf-8"))
+            # encode json
+            try:
+                encodedData = json.loads(data.decode("utf-8"))
+            except Exception:
+                encodedData = json.loads(data.decode("utf-8-sig"))
 
-            print('encodedData: ' + str(encodedData))
-
-            print('')
-
+            # test dirname on valid guid
             try:
                 guid = uuid.UUID(str(zipDir))
 
@@ -79,7 +80,7 @@ if __name__ == '__main__':
                     'str': encodedData['str'],
                 })
 
-                print("[VALID]")
+                # print("[VALID]")
             except Exception as e:
                 csvFiles['invalid']['data'].append({
                     'folder': zipDir,
@@ -87,22 +88,22 @@ if __name__ == '__main__':
                     'str': encodedData['str'],
                 })
 
-                print("[INVALID]")
+                # print("[INVALID]")
 
-            print()
+            # print()
 
         zip.close()
 
         csvFiles['valid']['sorted'] = sorted(csvFiles['valid']['data'], key=lambda x: (x['value'], x['str']))
         csvFiles['invalid']['sorted'] = sorted(csvFiles['invalid']['data'], key=lambda x: x['folder'])
 
-        print('validData: ' + str(csvFiles['valid']['data']))
-        print('sorted validData: ' + str(csvFiles['valid']['sorted']))
-        print()
-
-        print('invalidData: ' + str(csvFiles['invalid']['data']))
-        print('sorted invalidData: ' + str(csvFiles['invalid']['sorted']))
-        print()
+        # print('validData: ' + str(csvFiles['valid']['data']))
+        # print('sorted validData: ' + str(csvFiles['valid']['sorted']))
+        # print()
+        #
+        # print('invalidData: ' + str(csvFiles['invalid']['data']))
+        # print('sorted invalidData: ' + str(csvFiles['invalid']['sorted']))
+        # print()
 
         # create 2 csv
         zip = zipfile.ZipFile(zipFilename, 'a')
@@ -121,8 +122,8 @@ if __name__ == '__main__':
 
             zip.writestr(value['name'], csvData.getvalue())
 
-        #
-
         zip.close()
+
+        print('ZIP file was modify')
     else:
         print("Input file is not correct zip file!")
