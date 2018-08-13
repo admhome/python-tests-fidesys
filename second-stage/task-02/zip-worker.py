@@ -4,10 +4,24 @@ import sys
 import os
 import argparse
 import zipfile
+import uuid
+import json
+import csv
+import io
 
 
-ZIP_INPUT_FILE_NAME = "task2.zip"
-ZIP_OTPUT_FILE_NAME = "task2_.zip"
+ZIP_FILE_NAME = "task2.zip"
+
+csvFiles = {
+    'valid': {
+        'name': 'guids.csv',
+        'data': []
+    },
+    'invalid': {
+        'name': 'others.csv',
+        'data': []
+    }
+}
 
 
 def createParser ():
@@ -22,27 +36,93 @@ if __name__ == '__main__':
     parser = createParser()
     scriptParams = parser.parse_args(sys.argv[1:])
 
-    # формирование имени входного файла
+    # формирование имени файла
     if scriptParams.input:
-        inputFilename = scriptParams.input
+        zipFilename = scriptParams.input
 
-        if inputFilename[-1] != os.sep:
-            inputFilename += os.sep
+        if zipFilename[-1] != os.sep:
+            zipFilename += os.sep
 
-        inputFilename += ZIP_INPUT_FILE_NAME
+        zipFilename += ZIP_FILE_NAME
     else:
-        inputFilename = ZIP_INPUT_FILE_NAME
+        zipFilename = ZIP_FILE_NAME
 
-    # формирование имени выходного файла
-    if scriptParams.output:
-        outputFilename = scriptParams.output
+    print("Input file: " + zipFilename)
 
-        if outputFilename[-1] != os.sep:
-            outputFilename += os.sep
+    if zipfile.is_zipfile(zipFilename):
+        zip = zipfile.ZipFile(zipFilename, 'r')
 
-        outputFilename += ZIP_OTPUT_FILE_NAME
+        validData = []
+        invalidData = []
+
+        for file in zip.namelist():
+            zipFile = zip.getinfo(file).filename
+            zipDir = os.path.dirname(zipFile)
+            print('File: ' + str(zipFile))
+            print('Dir: ' + str(zipDir))
+
+            with zip.open(zipFile) as f:
+                data = f.read()
+
+            encodedData = json.loads(data.decode("utf-8"))
+
+            print('encodedData: ' + str(encodedData))
+
+            print('')
+
+            try:
+                guid = uuid.UUID(str(zipDir))
+
+                csvFiles['valid']['data'].append({
+                    'folder': zipDir,
+                    'value': encodedData['value'],
+                    'str': encodedData['str'],
+                })
+
+                print("[VALID]")
+            except Exception as e:
+                csvFiles['invalid']['data'].append({
+                    'folder': zipDir,
+                    'value': encodedData['value'],
+                    'str': encodedData['str'],
+                })
+
+                print("[INVALID]")
+
+            print()
+
+        zip.close()
+
+        csvFiles['valid']['sorted'] = sorted(csvFiles['valid']['data'], key=lambda x: (x['value'], x['str']))
+        csvFiles['invalid']['sorted'] = sorted(csvFiles['invalid']['data'], key=lambda x: x['folder'])
+
+        print('validData: ' + str(csvFiles['valid']['data']))
+        print('sorted validData: ' + str(csvFiles['valid']['sorted']))
+        print()
+
+        print('invalidData: ' + str(csvFiles['invalid']['data']))
+        print('sorted invalidData: ' + str(csvFiles['invalid']['sorted']))
+        print()
+
+        # create 2 csv
+        zip = zipfile.ZipFile(zipFilename, 'a')
+
+        for key, value in csvFiles.items():
+            csvData = io.StringIO()
+            csvWriter = csv.writer(csvData)
+
+            # header if needed
+            csvWriter.writerow(['folder', 'value', 'str'])
+
+            # print('key: ' + str(key))
+            # print('value: ' + str(value))
+            for sortedDataItem in value['sorted']:
+                csvWriter.writerow(sortedDataItem.values())
+
+            zip.writestr(value['name'], csvData.getvalue())
+
+        #
+
+        zip.close()
     else:
-        outputFilename = ZIP_OTPUT_FILE_NAME
-
-    print("Input file: " + inputFilename)
-    print("Output file: " + outputFilename)
+        print("Input file is not correct zip file!")

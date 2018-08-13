@@ -6,6 +6,7 @@ import argparse
 import zipfile
 import uuid
 import json
+import random
 
 
 ZIP_OTPUT_FILE_NAME = "task2.zip"
@@ -23,6 +24,8 @@ def createParser():
 if __name__ == '__main__':
     parser = createParser()
     scriptParams = parser.parse_args(sys.argv[1:])
+
+    random.seed()
 
     # формирование имени входного каталога
     if scriptParams.input:
@@ -66,7 +69,7 @@ if __name__ == '__main__':
             print('Folder "' + str(dirSuffix) + '" created')
 
             JSONdata = {
-                'value': iter,
+                'value': int(random.random() * 100),
                 'str': dirSuffix
             }
 
