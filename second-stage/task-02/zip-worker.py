@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
         for key, value in csvFiles.items():
             csvData = io.StringIO()
-            csvWriter = csv.writer(csvData)
+            csvWriter = csv.writer(csvData, delimiter =';')
 
             # header if needed
             csvWriter.writerow(['folder', 'value', 'str'])
