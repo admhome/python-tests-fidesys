@@ -49,6 +49,19 @@ if __name__ == '__main__':
 
     print("Input file: " + zipFilename)
 
+    # формирование пути и имени выходного файла
+    if scriptParams.output:
+        zipOutFilename = scriptParams.output
+
+        if zipOutFilename[-1] != os.sep:
+            zipOutFilename += os.sep
+
+        zipOutFilename += ZIP_FILE_NAME
+    else:
+        zipOutFilename = ZIP_FILE_NAME
+
+
+
     if zipfile.is_zipfile(zipFilename):
         zip = zipfile.ZipFile(zipFilename, 'r')
 
@@ -106,7 +119,7 @@ if __name__ == '__main__':
         # print()
 
         # create 2 csv
-        zip = zipfile.ZipFile(zipFilename, 'a')
+        zip = zipfile.ZipFile(zipOutFilename, 'a')
 
         for key, value in csvFiles.items():
             csvData = io.StringIO()
